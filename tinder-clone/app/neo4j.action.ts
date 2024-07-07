@@ -32,7 +32,7 @@ export const alreadySwipped = async (id: string) => {
   // We only build link between two users if both had liked each others
 
   const result = await driver.executeQuery(
-    `MATCH (cu User {applicationId :$applicationId}) MATCH (ou:User) WHERE NOT (cu)-[:LIKE | : DISLIKE]->(ou) AND cu <> ou RETURN ou`,
+    `MATCH (cu: User {applicationId :$applicationId}) MATCH (ou:User) WHERE NOT (cu)-[:LIKE | : DISLIKE]->(ou) AND cu <> ou RETURN ou`,
     { applicationId: id }
   );
   // result variable is an array and we use map function to get each record and return it
