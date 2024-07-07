@@ -38,3 +38,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 Step for development
 
 1. Check if user is logged in or not
+2. If user is signing up, then callback will save the user in database,
