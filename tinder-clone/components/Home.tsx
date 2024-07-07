@@ -2,26 +2,28 @@
 import { Neo4juser } from "@/types";
 import * as React from "react";
 import TinderCard from "react-tinder-card";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { neo4jswipe } from "@/app/neo4j.action";
 
 interface HomePageClientProps {
   currentUser: Neo4juser;
   users: Neo4juser[];
 }
 
-const handleSwipe = (direction: string, userId: string) => {};
-
 const HomePageClient: React.FC<HomePageClientProps> = ({
   currentUser,
   users,
 }) => {
+  const handleSwipe = async (direction: string, userId: string) => {
+    const isMatch = await neo4jswipe(
+      currentUser.applicationId,
+      direction,
+      userId
+    );
+    if (isMatch) {
+      alert("Matched!!!");
+    }
+  };
   return (
     <>
       <div className="w-full h-screen flex justify-center items-center mb-4">

@@ -39,3 +39,28 @@ export const alreadySwipped = async (id: string) => {
   const users = result.records.map((record) => record.get("ou").properties);
   return users as Neo4juser[];
 };
+
+// This function checks if the swipe was left or right, and with respect to that it will make link for like or dislike
+export const neo4jswipe = async (id: string, swipe: string, userId: string) => {
+  const directionOfSwipe = swipe === "left" ? "DISLIKE" : "LIKE";
+  await driver.executeQuery(
+    `MATCH (cu: User {applicationId :$id}),(ou:User {applicationId : $userId }) CREATE (cu)-[:${directionOfSwipe}]->
+  (ou)`,
+    {
+      id,
+      userId,
+    }
+  );
+  // In case of other user already liked current logged in user, and current user likes the other user too, that makes a match
+  // Following query will check the match
+  if (directionOfSwipe === "LIKE") {
+    const result = await driver.executeQuery(
+      `MATCH (cu:User {applicationId :$id }),(ou:User {applicationId : $userId}) WHERE (ou)-[:LIKE] -> (cu) RETURN ou as  match`,
+      { id, userId }
+    );
+    const matches = result.records.map(
+      (record) => record.get("match").properties
+    );
+    return Boolean(matches.length > 0);
+  }
+};
