@@ -64,3 +64,14 @@ export const neo4jswipe = async (id: string, swipe: string, userId: string) => {
     return Boolean(matches.length > 0);
   }
 };
+
+export const getMatches = async (currnetUserId: string) => {
+  const result = await driver.executeQuery(
+    `MATCH (cu:User {applicationId :$id}) -[:LIKE]-(ou: User)-[:LIKE] -> (cu) RETURN ou as match`,
+    { id: currnetUserId }
+  );
+  const matches = result.records.map(
+    (record) => record.get("match").properties
+  );
+  return matches as Neo4juser[];
+};
